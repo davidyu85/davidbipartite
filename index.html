@@ -15,12 +15,12 @@ rect{
 
 div.tooltip {   
   position: absolute;                  
-  width: 60px;                  
-  height: 28px;                 
-  padding: 2px;             
+  width: 300px;                  
+  height: auto;                 
+  padding: 12px;             
   font: 12px sans-serif;        
   background: #fff;   
-  border: 1px;            
+  border: 1px solid #000;            
   pointer-events: none;         
 }
 </style>
@@ -35,7 +35,11 @@ var setting = {
 
 
 var processed = [];
+var json;
+
 d3.json("example.json",function(error,data){
+  json = data;
+  
   data
     .sourcePatient
     .phenotypes
@@ -64,8 +68,12 @@ d3.json("example.json",function(error,data){
             }else if(patientPheno.similar_to){
               var s = patientPheno.similar_to;
               
-              if(s.label == dpl)
-                pushResult(ppl+' ('+(s.similarity_value*100)+'% similar with '+s.label+')',disorder,1);
+              s.forEach(function(st){
+                if(st.label == dpl){
+                  pushResult(ppl,disorder,1);
+                  return;
+                }
+              });
             }
           })
         ;
@@ -95,7 +103,7 @@ d3.json("example.json",function(error,data){
           data:bP.partData(arrayData,2), 
           id:"PatientX", 
           header:{
-            left1:"Abnormallies",
+            left1:"Phenotypes",
             left2:"Occurances",
             right1:"Disorders",
             right2:"Likelihood",

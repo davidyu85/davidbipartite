@@ -218,7 +218,63 @@
 		transitionPart(data, id, 1);
 		transitionEdges(data, id);
 	}
+  
+  function infoPhenotype(d,i){ 
+    var dd = d[0].data;
+        pheno = dd.keys[0][i],
+        related = dd.data[0][i],
+        h = "",
+        moreInfo = {};
+        
+     
+    json
+      .sourcePatient
+      .phenotypes
+      .forEach(function(p){
+        if(pheno == p.label){
+          moreInfo = p;
+        }
+      })
+    ;
+
+    h += pheno;
+    h += '<hr>';
+    h += 'Abnormaly types:';
+    h += '<ul>';
+    
+    moreInfo.root_terms.forEach(function(t){
+      h += '<li>'+t+'</li>';
+    });
+    
+    h += '</ul>';
+    
+    if(moreInfo.similar_to){
+      h += 'Similar to:';
+      h += '<ul>';
+      
+      moreInfo.similar_to.forEach(function(st){
+        h += '<li>'+st.label+' ('+st.similarity_value*100+'%)</li>';
+      });
+ 
+      h += '</ul>';
+    }
+    
+    h += 'Related disorders:';
+    h += '<ul>';
+    
+    related.forEach(function(dIndex,j){
+      if(dIndex == 1)h += '<li>'+dd.keys[1][j]+'</li>';
+    });
+    
+    h += '</ul>';
+    
+    return h;
+  }
 	
+  function infoDisorder(data,i){
+    return "Disorder";
+  }
+  
 	bP.draw = function(data, svg){
 		data.forEach(function(biP,s){
 			svg.append("g")
@@ -236,16 +292,21 @@
         .attr("class", "tooltip")               
         .style("opacity", 0);
 
-			[0,1].forEach(function(p){			
+      var info;  
+        
+			[0,1].forEach(function(p){
 				d3.select("#"+biP.id)
 					.select(".part"+p)
 					.select(".mainbars")
 					.selectAll(".mainbar")
 					.on("mouseover",function(d, i){
+            if(p == 0)info = infoPhenotype(data,i);
+            else info = infoDisorder(data,i);
+          
             div.transition()        
                .duration(200)      
                .style("opacity", .9);      
-            div.html('test')  
+            div.html(info)  
                .style("left", (d3.event.pageX) + "px")     
                .style("top", (d3.event.pageY) + "px");  
                 
