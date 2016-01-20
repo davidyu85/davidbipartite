@@ -16,23 +16,25 @@
 			"label": "Microcephaly",
 			"list": "Human Phenotype Ontology",
 			"root_terms": ["Abnormality of head or neck", "Abnormality of the skeletal system"],
-      "similar_to":{
-        "uri": "HP:0000257",
-        "label": "Macrocephaly",
-        "list": "Human Phenotype Ontology",
-        "root_terms": ["Abnormality of head or neck", "Abnormality of the skeletal system"],
-        "similarity_value":0.85
-      }
+      "similar_to":[
+        {
+          "uri": "HP:0000257",
+          "label": "Macrocephaly",
+          "list": "Human Phenotype Ontology",
+          "root_terms": ["Abnormality of head or neck", "Abnormality of the skeletal system"],
+          "similarity_value":0.85
+        }
+      ]
 		}, {
 			"uri": "HP:0000238",
 			"label": "Hydrocephalus",
 			"list": "Human Phenotype Ontology",
 			"root_terms": ["Abnormality of the nervous system"]
 		}, {
-			"uri": "HP:0011304",
-			"label": "Broad thumb",
+			"uri": "HP:0001250",
+			"label": "Seizures",
 			"list": "Human Phenotype Ontology",
-			"root_terms": ["Abnormality of the skeletal system", "Abnormality of limbs"]
+			"root_terms": ["Abnormality of the nervous system"]
 		}]
 	},
 	"disorders": [{
