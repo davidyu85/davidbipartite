@@ -51,12 +51,6 @@ div.tooltip h3{
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="biPartite.js"></script>
 <script>
-var setting = {
-
-
-};
-
-
 var processed = [];
 var json;
 
@@ -68,8 +62,7 @@ d3.json("example.json",function(error,data){
     .phenotypes
     .forEach(function(patientPheno){
       matching(patientPheno);
-    })
-    
+    })   
   ;
   
   genGraph(processed);
@@ -131,7 +124,7 @@ d3.json("example.json",function(error,data){
           left2:"Likelihood",
           right1:"Phenotypes",
           right2:"Occurances",
-          heading:"Phenotypes and possible disorders for "+patientId
+          heading:""
         }
       }
     ];

@@ -236,7 +236,6 @@
       })
     ;
     
-    h += '<h3>'+json.sourcePatient.patient_id+' has phenotype'+'</h3>';
     h += '<h3>'+pheno+'</h3>';
     h += '<hr>';
     h += 'Abnormaly types:';
@@ -288,7 +287,6 @@
       })
     ;
     
-    h += '<h3>'+json.sourcePatient.patient_id+' may have disorder'+'</h3>';
     h += '<h3>'+disorder+'</h3>';
     h += '<hr>';
     h += 'Phenotypes related to '+disorder+':';
