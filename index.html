@@ -105,11 +105,12 @@ d3.json("example.json",function(error,data){
   }
   
   function pushResult(phenotype,disorder,weight){
-    processed.push([phenotype,disorder.label,weight]);
+    processed.push([disorder.label,phenotype,weight]);
   }
   
   function genGraph(arrayData){
-    var width = 1200, height = 610, margin ={b:0, t:40, l:320, r:50};
+    var width = 1200, height = 610, margin ={b:0, t:40, l:320, r:50},
+        patientId = data.sourcePatient.patient_id;
 
     var svg = 
       d3
@@ -121,21 +122,21 @@ d3.json("example.json",function(error,data){
           .attr("transform","translate("+ margin.l+","+margin.t+")")
       ;
 
-      var d = [ 
-        {
-          data:bP.partData(arrayData,2), 
-          id:"PatientX", 
-          header:{
-            left1:"Phenotypes",
-            left2:"Occurances",
-            right1:"Disorders",
-            right2:"Likelihood",
-            heading:"Phenotypes and possible disorders for "+data.sourcePatient.patient_id
-          }
+    var d = [ 
+      {
+        data:bP.partData(arrayData,2), 
+        id:patientId.replace(/:/g,"_"), 
+        header:{
+          left1:"Disorders",
+          left2:"Likelihood",
+          right1:"Phenotypes",
+          right2:"Occurances",
+          heading:"Phenotypes and possible disorders for "+patientId
         }
-      ];
+      }
+    ];
 
-      bP.draw(d, svg);
+    bP.draw(d, svg);
   }
 });
 

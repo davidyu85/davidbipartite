@@ -128,7 +128,7 @@
 			.text(function(d,i){ return d.value ;})
 			.attr("text-anchor","end");
 		
-    if(p==1){    
+    if(p==0){    
       mainbar.append("text").attr("class","barpercent")
         .attr("x", c3[p]).attr("y",function(d){ return d.middle+5;})
         .text(function(d,i){ return "( "+Math.round(100*d.percent)+"%)" ;})
@@ -220,8 +220,8 @@
   
   function infoPhenotype(d,i){ 
     var dd = d[0].data;
-        pheno = dd.keys[0][i],
-        related = dd.data[0][i],
+        pheno = dd.keys[1][i],
+        related = dd.data[1][i],
         h = "",
         moreInfo = {};
         
@@ -263,7 +263,7 @@
     h += '<ul>';
     
     related.forEach(function(dIndex,j){
-      if(dIndex == 1)h += '<li>'+dd.keys[1][j]+'</li>';
+      if(dIndex == 1)h += '<li>'+dd.keys[0][j]+'</li>';
     });
     
     h += '</ul>';
@@ -273,16 +273,16 @@
 	
   function infoDisorder(d,i){
     var dd = d[0].data;
-    patientPheno = dd.keys[0],
-    disorder = dd.keys[1][i],
-    relatedPheno = dd.data[1][i],
+    patientPheno = dd.keys[1],
+    disorder = dd.keys[0][i],
+    relatedPheno = dd.data[0][i],
     h = "",
     disorderInfo = {};
      
     json
       .disorders
       .forEach(function(dis){
-        if(dd.keys[1][i] == dis.label){
+        if(dd.keys[0][i] == dis.label){
           disorderInfo = dis;
         }
       })
@@ -353,7 +353,7 @@
 					.select(".mainbars")
 					.selectAll(".mainbar")
 					.on("mouseover",function(d, i){
-            if(p == 0)info = infoPhenotype(data,i);
+            if(p == 1)info = infoPhenotype(data,i);
             else info = infoDisorder(data,i);
           
             div.transition()        
