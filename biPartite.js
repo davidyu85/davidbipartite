@@ -154,7 +154,7 @@
 	
 	function drawHeader(header, id){
 		d3.select("#"+id).append("g").attr("class","header").append("text").text(header.heading)
-			.style("font-size","20").attr("x",((c3[1] - c1[0])/2) - (header.heading.length*5/2)).attr("y",-20).style("text-anchor","middle")
+			.style("font-size","20").attr("x",((c3[1] - c1[0])/2) - (header.heading.length*20/2)).attr("y",-20).style("text-anchor","middle")
 			.style("font-weight","bold");
 		
 		[0,1].forEach(function(d){
