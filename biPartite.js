@@ -153,10 +153,8 @@
 	}	
 	
 	function drawHeader(header, id){
-		d3.select("#"+id).append("g").attr("class","header").append("text").text(header.heading)
-			.style("font-size","20").attr("x",((c3[1] - c1[0])/2) - (header.heading.length*20/2)).attr("y",-20).style("text-anchor","middle")
-			.style("font-weight","bold");
-		
+		d3.select("body").append("h2").attr("class","header").text(header.heading);
+
 		[0,1].forEach(function(d){
 			var h = d3.select("#"+id).select(".part"+d).append("g").attr("class","header"),
           side = "left";

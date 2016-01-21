@@ -5,6 +5,15 @@ body{
 	width:1200px;
 	margin:100px auto;
 }
+
+.header{
+  position:absolute;
+  top:30px;
+  left:0;
+  text-align:center;
+  width:100%;
+}
+
 svg text{
 	font-size:12px;
   width:100px;
@@ -100,7 +109,7 @@ d3.json("example.json",function(error,data){
   }
   
   function genGraph(arrayData){
-    var width = 1200, height = 610, margin ={b:0, t:40, l:360, r:50};
+    var width = 1200, height = 610, margin ={b:0, t:40, l:320, r:50};
 
     var svg = 
       d3
