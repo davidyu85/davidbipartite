@@ -1,6 +1,6 @@
 !function(){
 	var bP={};	
-	var b=30, bb=400, height=600, buffMargin=5, minHeight=14;
+	var b=30, bb=480, height=600, buffMargin=8, minHeight=14;
 	var c1=[-300, 50], c2=[-40, 200], c3=[-20, 260]; //Column positions of labels.
 	var colors =["#3366CC", "#DC3912","#FF9900","#109618", "#990099", "#0099C6"];
 	
@@ -219,6 +219,7 @@
 		transitionEdges(data, id);
 	}
   
+  
   function infoPhenotype(d,i){ 
     var dd = d[0].data;
         pheno = dd.keys[0][i],
@@ -236,8 +237,9 @@
         }
       })
     ;
-
-    h += pheno;
+    
+    h += '<h3>'+json.sourcePatient.patient_id+' has phenotype'+'</h3>';
+    h += '<h3>'+pheno+'</h3>';
     h += '<hr>';
     h += 'Abnormaly types:';
     h += '<ul>';
@@ -271,8 +273,61 @@
     return h;
   }
 	
-  function infoDisorder(data,i){
-    return "Disorder";
+  function infoDisorder(d,i){
+    var dd = d[0].data;
+    patientPheno = dd.keys[0],
+    disorder = dd.keys[1][i],
+    relatedPheno = dd.data[1][i],
+    h = "",
+    disorderInfo = {};
+     
+    json
+      .disorders
+      .forEach(function(dis){
+        if(dd.keys[1][i] == dis.label){
+          disorderInfo = dis;
+        }
+      })
+    ;
+    
+    h += '<h3>'+json.sourcePatient.patient_id+' may have disorder'+'</h3>';
+    h += '<h3>'+disorder+'</h3>';
+    h += '<hr>';
+    h += 'Phenotypes related to '+disorder+':';
+    h += '<ul>';
+    
+    disorderInfo
+      .phenotypes
+      .forEach(function(p){
+        var temp = "";
+        
+        relatedPheno.forEach(function(rp,ri){
+          
+          if(rp == 1 && p.label == patientPheno[ri]){
+            temp = '<li class="match">'+p.label+'</li>';
+          }
+          
+          json
+            .sourcePatient
+            .phenotypes
+            .forEach(function(sp){
+              if(sp.similar_to){
+                sp.similar_to.forEach(function(st){
+                  if(p.label == st.label)
+                  temp = '<li class="match">'+p.label+' - similar with '+sp.label+' by '+st.similarity_value*100+'%</li>';
+                });
+              }
+            })
+          ; 
+         
+        });
+        
+        h += temp || '<li>'+p.label+'</li>';
+      });
+    
+    h += '</ul>';
+    
+    return h;
   }
   
 	bP.draw = function(data, svg){
@@ -313,8 +368,8 @@
             return bP.selectSegment(data, p, i); 
           })
           .on("mousemove",function(d, i){
-            div.style("left", (d3.event.pageX) + "px")     
-               .style("top", (d3.event.pageY) + "px");  
+            div.style("left", (d3.event.pageX+20) + "px")     
+               .style("top", (d3.event.pageY+20) + "px");  
           })
 					.on("mouseout",function(d, i){ 
             div.transition()        
