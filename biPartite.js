@@ -393,14 +393,14 @@
                .duration(200)      
                .style("opacity", .9);      
             div.html(info)  
-               .style("left", (d3.event.pageX) + "px")     
+               .style("left", (d3.event.pageX - (1-p)*(parseFloat(div.style("width"))+20) + ((-1+(p*2))*30) + "px"))  //DAVID:This determines the positioning of the info popup offset from the cursor.    
                .style("top", (d3.event.pageY) + "px");  
                 
             return bP.selectSegment(data, p, i); 
           })
           .on("mousemove",function(d, i){
-            div.style("left", (d3.event.pageX+20) + "px")     
-               .style("top", (d3.event.pageY+20) + "px");  
+            div.style("left", (d3.event.pageX - (1-p)*(parseFloat(div.style("width"))+20) + ((-1+(p*2))*30) + "px"))     
+               .style("top", (d3.event.pageY) + "px");  
           })
 					.on("mouseout",function(d, i){ 
             div.transition()        
