@@ -1,7 +1,7 @@
 !function(){
 	var bP={};	
-	var b=30, bb=480, height=600, buffMargin=8, minHeight=14;
-	var c1=[-300, 50], c2=[-60, 200], c3=[-20, 260]; //Column positions of labels.
+	var b=20, bb=200, height=600, buffMargin=8, minHeight=14;
+	var c1=[-200, 40], c2=[-75, 180], c3=[-15, 260]; //Column positions of labels. DAVID: c1=label, c2=value, c3=percentage, [left, right]
 	var colors =["#3366CC", "#DC3912","#FF9900","#109618", "#990099", "#0099C6"];
 	
 	bP.partData = function(data,p){
@@ -120,7 +120,7 @@
 			
 		mainbar.append("text").attr("class","barlabel")
 			.attr("x", c1[p]).attr("y",function(d){ return d.middle+5;})
-			.text(function(d,i){ return data.keys[p][i];})
+			.text(function(d,i){ return data.keys[p][i];}).call(wrap,100)
 			.attr("text-anchor","start" );
 			
 		mainbar.append("text").attr("class","barvalue")
@@ -177,6 +177,41 @@
 		return [0, d.y1, bb, d.y2, bb, d.y2+d.h2, 0, d.y1+d.h1].join(" ");
 	}	
 	
+  function wrap(text, width) {
+    text.each(function () {
+        var text = d3.select(this),
+            words = text[0][0].textContent.split(/\s+/).reverse(),
+            word,
+            line = [],
+            lineNumber = 0,
+            lineHeight = 1.2, // ems
+            x = text.attr("x"), //DAVID: Y is not defined for the tspan to make it move with the text node.
+            dy = 0,
+            tspan = text.text(null)
+                        .append("tspan")
+                        .attr("x", x)
+                        .attr("dy", dy + "em");
+        
+        var count = 0; //DAVID: This variable is used to ensure if the first word doesn't jump to the next line if is larger than the text width.
+        
+        while (word = words.pop()) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > width) {
+                if(count!=0)++lineNumber;
+                line.pop();
+                tspan.text(line.join(" "));
+                line = [word];
+                tspan = text.append("tspan")
+                            .attr("x", x)
+                            .attr("dy", lineNumber * lineHeight + dy + "em")
+                            .text(word);
+            }
+            count++;
+        }
+    });
+  }
+  
 	function transitionPart(data, id, p){
 		var mainbar = d3.select("#"+id).select(".part"+p).select(".mainbars")
 			.selectAll(".mainbar").data(data.mainBars[p]);
@@ -187,7 +222,7 @@
 			
 		mainbar.select(".barlabel").transition().duration(500)
 			.attr("y",function(d){ return d.middle+5;});
-			
+
 		mainbar.select(".barvalue").transition().duration(500)
 			.attr("y",function(d){ return d.middle+5;}).text(function(d,i){ return d.value ;});
 			
