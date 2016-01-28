@@ -1,10 +1,12 @@
 !function(){
-	var bP={};	
-	var b=20, bb=200, height=600, buffMargin=8, minHeight=14;
-	var c1=[-200, 40], c2=[-75, 180], c3=[-15, 260]; //Column positions of labels. DAVID: c1=label, c2=value, c3=percentage, [left, right]
-	var colors =["#3366CC", "#DC3912","#FF9900","#109618", "#990099", "#0099C6"];
-	
-	bP.partData = function(data,p){
+  var bP = {};
+  var b = 20, bb = 200, height = 300, buffMargin = 8, minHeight = 14;
+  var c1 = [-200, 40], c2 = [-75, 180], c3 = [-15, 260]; //Column positions of labels. DAVID: c1=label, c2=value, c3=percentage, [left, right]
+  var colors = ["#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#0099C6"];
+  var json;
+
+  bP.partData = function (data, p, jsonData) {
+    json = jsonData;
 		var sData={};
 		
 		sData.keys=[
@@ -113,25 +115,49 @@
 
 		mainbar.append("rect").attr("class","mainrect")
 			.attr("x", 0).attr("y",function(d){ return d.middle-d.height/2; })
-			.attr("width",b).attr("height",function(d){ return d.height; })
+			.attr("width",b).attr("height",function(d,i){ //DAVID: These are modified due to the request to display patient phenotype that doesn't match with any selected disorders.
+        if(data.keys[p][i].length == 0)return 0; 
+        else return d.height; 
+      })
 			.style("shape-rendering","auto")
 			.style("fill-opacity",0).style("stroke-width","0.5")
 			.style("stroke","black").style("stroke-opacity",0);
 			
 		mainbar.append("text").attr("class","barlabel")
 			.attr("x", c1[p]).attr("y",function(d){ return d.middle+5;})
-			.text(function(d,i){ return data.keys[p][i];}).call(wrap,100)
+			.text(function(d,i){ 
+        if(data.keys[p][i].length == 0)return ""; 
+        else return data.keys[p][i];
+      }).call(wrap,100)
 			.attr("text-anchor","start" );
 			
 		mainbar.append("text").attr("class","barvalue")
 			.attr("x", c2[p]).attr("y",function(d){ return d.middle+5;})
-			.text(function(d,i){ return d.value ;})
+			.text(function(d,i){ 
+        if(data.keys[p][i].length == 0)return ""; 
+        return d.value;
+      })
 			.attr("text-anchor","end");
 		
     if(p==0){    
       mainbar.append("text").attr("class","barpercent")
         .attr("x", c3[p]).attr("y",function(d){ return d.middle+5;})
-        .text(function(d,i){ return "( "+Math.round(100*d.percent)+"%)" ;})
+        .text(function(d,i){
+          var selectedDisorder = data.keys[p][i];
+          var returnedPercentage;
+          if(selectedDisorder.length == 0)return ""; 
+          else {
+            json
+              .disorders
+              .forEach(function(disorder){ console.log(disorder.phenotypes);
+                if(selectedDisorder == disorder.label){
+                  returnedPercentage = Math.round(100*(d.value/disorder.phenotypes.length)) ;
+                }
+              })
+
+            return "( "+returnedPercentage+"%)" ;
+          }
+        })
         .attr("text-anchor","end").style("fill","grey");
 		}	
       
@@ -224,11 +250,15 @@
 			.attr("y",function(d){ return d.middle+5;});
 
 		mainbar.select(".barvalue").transition().duration(500)
-			.attr("y",function(d){ return d.middle+5;}).text(function(d,i){ return d.value ;});
+			.attr("y",function(d){ return d.middle+5;})
+      .text(function(d,i){ 
+        if(data.keys[p][i].length == 0)return ""; 
+        else return d.value ;
+      });
 			
 		mainbar.select(".barpercent").transition().duration(500)
-			.attr("y",function(d){ return d.middle+5;})
-			.text(function(d,i){ return "( "+Math.round(100*d.percent)+"%)" ;});
+			.attr("y",function(d){ return d.middle+5;});
+
 			
 		d3.select("#"+id).select(".part"+p).select(".subbars")
 			.selectAll(".subbar").data(data.subBars[p])
@@ -260,7 +290,7 @@
         h = "",
         moreInfo = {};
         
-     
+
     json
       .sourcePatient
       .phenotypes
@@ -375,11 +405,11 @@
       
             
       var div = d3.select("body").append("div")   
-        .attr("class", "tooltip")               
-        .style("opacity", 0);
+        .attr("class", "biPartitePopuptip")            
+        .style("display", "none");
 
       var info;  
-        
+
 			[0,1].forEach(function(p){
 				d3.select("#"+biP.id)
 					.select(".part"+p)
@@ -389,9 +419,7 @@
             if(p == 1)info = infoPhenotype(data,i);
             else info = infoDisorder(data,i);
           
-            div.transition()        
-               .duration(200)      
-               .style("opacity", .9);      
+            div.style("display","block");      
             div.html(info)  
                .style("left", (d3.event.pageX - (1-p)*(parseFloat(div.style("width"))+20) + ((-1+(p*2))*30) + "px"))  //DAVID:This determines the positioning of the info popup offset from the cursor.    
                .style("top", (d3.event.pageY) + "px");  
@@ -403,9 +431,7 @@
                .style("top", (d3.event.pageY) + "px");  
           })
 					.on("mouseout",function(d, i){ 
-            div.transition()        
-              .duration(500)      
-              .style("opacity", 0);
+            div.style("display","none");
               
             return bP.deSelectSegment(data, p, i); 
           });	

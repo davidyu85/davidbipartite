@@ -17,13 +17,13 @@ body{
 svg text{
 	font-size:12px;
   width:100px;
-  font-family:Verdana;
+  font-family:arial;
 }
 rect{
 	shape-rendering:crispEdges;
 }
 
-div.tooltip {   
+div.biPartitePopuptip {   
   position: absolute;                  
   width: 320px;                  
   height: auto;                 
@@ -34,17 +34,17 @@ div.tooltip {
   pointer-events: none;         
 }
 
-div.tooltip ul{
+div.biPartitePopuptip ul{
   margin-left:0.8em;
   padding-left:0.8em;
 }
 
-div.tooltip li.match{
+div.biPartitePopuptip li.match{
   color:#080;
   font-weight:bold;
 }
 
-div.tooltip h3{
+div.biPartitePopuptip h3{
   padding:0px;
 }
 </style>
@@ -53,11 +53,8 @@ div.tooltip h3{
 <script src="biPartite.js"></script>
 <script>
 var processed = [];
-var json;
 
-d3.json("example.json",function(error,data){
-  json = data;
-  
+d3.json("example.json",function(error,data){ 
   data
     .sourcePatient
     .phenotypes
@@ -91,6 +88,8 @@ d3.json("example.json",function(error,data){
                   return;
                 }
               });
+            }else{
+              pushResult(ppl,"",0);
             }
           })
         ;
@@ -99,7 +98,8 @@ d3.json("example.json",function(error,data){
   }
   
   function pushResult(phenotype,disorder,weight){
-    processed.push([disorder.label,phenotype,weight]);
+    var dlabel = disorder.label || disorder;
+    processed.push([dlabel,phenotype,weight]);
   }
   
   function genGraph(arrayData){
@@ -118,13 +118,13 @@ d3.json("example.json",function(error,data){
 
     var d = [ 
       {
-        data:bP.partData(arrayData,2), 
+        data:bP.partData(arrayData,2,data), 
         id:patientId.replace(/:/g,"_"), 
         header:{
           left1:"Disorders",
           left2:"Likelihood",
           right1:"Phenotypes",
-          right2:"Occurances",
+          right2:"Occurences",
           heading:""
         }
       }
