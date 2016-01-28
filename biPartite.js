@@ -1,6 +1,6 @@
 !function(){
   var bP = {};
-  var b = 20, bb = 200, height = 300, buffMargin = 8, minHeight = 14;
+  var b = 20, bb = 200, height = 300, buffMargin = 8, minHeight = 0;
   var c1 = [-200, 40], c2 = [-75, 180], c3 = [-15, 260]; //Column positions of labels. DAVID: c1=label, c2=value, c3=percentage, [left, right]
   var colors = ["#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#0099C6"];
   var json;
@@ -28,13 +28,13 @@
 	
 	function visualize(data){
 		var vis ={};
-		function calculatePosition(a, s, e, b, m){
+		function calculatePosition(k, a, s, e, b, m){
 			var total=d3.sum(a);
 			var sum=0, neededHeight=0, leftoverHeight= e-s-2*b*a.length;
 			var ret =[];
 			
 			a.forEach(
-				function(d){ 
+				function(d){
 					var v={};
 					v.percent = (total == 0 ? 0 : d/total); 
 					v.value=d;
@@ -44,11 +44,17 @@
 				}
 			);
 			
-			var scaleFact=leftoverHeight/Math.max(neededHeight,1), sum=0;
+			var scaleFact=leftoverHeight/Math.max(neededHeight,1), sum=0,pb=b,pm=m;
 			
 			ret.forEach(
-				function(d){ 
-					d.percent = scaleFact*d.percent; 
+				function(d,i){
+          if(k[i] == ""){ //DAVID:This is added so that when it detect a block with no label, it give a buffMargin and minHeight 0.
+            b = 0;
+            m = 0;
+          }else{
+            b = pb;
+            m = pm;
+          }
 					d.height=(d.height==m? m : d.height*scaleFact);
 					d.middle=sum+b+d.height/2;
 					d.y=s + d.middle - d.percent*(e-s-2*b*a.length)/2;
@@ -60,15 +66,29 @@
 			return ret;
 		}
 
-		vis.mainBars = [ 
-			calculatePosition( data.data[0].map(function(d){ return d3.sum(d);}), 0, height, buffMargin, minHeight),
-			calculatePosition( data.data[1].map(function(d){ return d3.sum(d);}), 0, height, buffMargin, minHeight)
+    vis.mainBars = [ 
+			calculatePosition(
+        data.keys[0].map(function(d){ return d;}), 
+        data.data[0].map(function(d){ return d3.sum(d);}), 
+        0, 
+        height, 
+        buffMargin, 
+        minHeight
+      ),
+			calculatePosition(
+        data.keys[1].map(function(d){ return d;}), 
+        data.data[1].map(function(d){ return d3.sum(d);}), 
+        0, 
+        height, 
+        buffMargin, 
+        minHeight
+      )
 		];
-		
+    
 		vis.subBars = [[],[]];
 		vis.mainBars.forEach(function(pos,p){
-			pos.forEach(function(bar, i){	
-				calculatePosition(data.data[p][i], bar.y, bar.y+bar.h, 0, 0).forEach(function(sBar,j){ 
+			pos.forEach(function(bar, i){
+				calculatePosition(data.keys[p][i], data.data[p][i], bar.y, bar.y+bar.h, 0, 0).forEach(function(sBar,j){ 
 					sBar.key1=(p==0 ? i : j); 
 					sBar.key2=(p==0 ? j : i); 
 					vis.subBars[p].push(sBar); 
