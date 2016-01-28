@@ -149,7 +149,7 @@
           else {
             json
               .disorders
-              .forEach(function(disorder){ console.log(disorder.phenotypes);
+              .forEach(function(disorder){
                 if(selectedDisorder == disorder.label){
                   returnedPercentage = Math.round(100*(d.value/disorder.phenotypes.length)) ;
                 }
@@ -209,7 +209,6 @@
             words = text[0][0].textContent.split(/\s+/).reverse(),
             word,
             line = [],
-            lineNumber = 0,
             lineHeight = 1.2, // ems
             x = text.attr("x"), //DAVID: Y is not defined for the tspan to make it move with the text node.
             dy = 0,
@@ -224,13 +223,12 @@
             line.push(word);
             tspan.text(line.join(" "));
             if (tspan.node().getComputedTextLength() > width) {
-                if(count!=0)++lineNumber;
                 line.pop();
                 tspan.text(line.join(" "));
                 line = [word];
                 tspan = text.append("tspan")
                             .attr("x", x)
-                            .attr("dy", lineNumber * lineHeight + dy + "em")
+                            .attr("dy", lineHeight + dy + "em")
                             .text(word);
             }
             count++;

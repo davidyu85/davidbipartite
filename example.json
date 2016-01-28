@@ -39,7 +39,7 @@
 	},
 	"disorders": [{
 		"disorder_id": "ORPHA:11",
-		"label": "Achondroplasia",
+		"label": "Multiple epiphyseal dysplasia Al-Ghazali type",
 		"phenotypes": [{
 			"uri": "HP:0011304",
 			"label": "Broad thumb",
